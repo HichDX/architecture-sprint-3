@@ -1,0 +1,15 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+'LAYOUT_WITH_LEGEND
+
+
+Person(user, "Пользователь")
+System(e1, "Умный дом", "Управление отоплением, Мониторинг температуры")
+System_Ext(sensor, "Датчик", "API датчика")
+
+
+Rel(user, e1, "Пользуется системой умный дом")
+Rel(e1, sensor, "Включение/отключение отопления, получение данных о температуре")
+
+@enduml

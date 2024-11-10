@@ -1,0 +1,44 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+
+class User{
+    + Int id
+    + String login
+    + Hash password
+    + DateTime date_add
+    + DateTime time_modif
+}
+
+class Role{
+   + Int id
+   + String name_role
+}
+
+
+class House{
+    + Int id
+    + String address
+    + DateTime date_add
+    + DateTime time_modif
+}
+
+
+class Device{
+    + Int id
+    + String device_name
+    + DateTime date_add
+    + DateTime time_modif
+}
+
+class DeviceType{
+    + int id
+    + string type_name
+}
+
+User ||--o{ House : "has"
+User ||--o{ Role: "has"
+House||--o{ Device: "has"
+Device||--o{ DeviceType: "has"
+
+@enduml

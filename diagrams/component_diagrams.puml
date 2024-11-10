@@ -1,0 +1,36 @@
+@startuml
+'!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Container.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+'LAYOUT_WITH_LEGEND
+
+
+Person(user, "Пользователь")
+
+Enterprise_Boundary(e1, "Умный дом"){
+
+Container(api_gateway, "Api Gateway")
+Container(control_device, "Управление устройствами", "Включение/отключение отопления, регулирование температуры"){
+Component(control_device_component, "Контроллер", "HTTP запрос")
+Component(control_device_service, "Сервис", "Бизнес логика")
+Component(control_device_kafka, "Отправка сообщения", "Kafka Consumers")
+Component(control_device_repository, "Репозиторий", "Доступ к данным")
+}
+
+ContainerDb(device_DB, "БД", "PostgreSQL")
+
+ContainerQueue(Kafka, "Шина данных", "Kafka")
+
+Rel(user, api_gateway, "Пользуется", "REST")
+
+Rel(api_gateway, control_device_component, "Включить отопление", "REST")
+Rel(control_device_component, control_device_service, "")
+Rel(control_device_service, control_device_repository, "")
+Rel(control_device_service, control_device_kafka, "")
+Rel(control_device_repository, device_DB, "Чтение/Запись")
+
+Rel(control_device_kafka, Kafka, "Включить отопление")
+
+}
+@enduml
