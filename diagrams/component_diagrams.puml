@@ -1,16 +1,16 @@
 @startuml
-'!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Container.puml
+!include https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Container.puml
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
 
 'LAYOUT_WITH_LEGEND
 
 
-Person(user, "Пользователь")
+Person(user, "Пользователь", "Мобильное приложение")
 
 Enterprise_Boundary(e1, "Умный дом"){
 
-Container(api_gateway, "Api Gateway")
+Container(api_gateway, "Api Gateway", "Kusk", "Машрутизация, управление доступом, единая точка входа")
 Container(control_device, "Управление устройствами", "Включение/отключение отопления, регулирование температуры"){
 Component(control_device_component, "Контроллер", "HTTP запрос")
 Component(control_device_service, "Сервис", "Бизнес логика")
@@ -18,19 +18,19 @@ Component(control_device_kafka, "Отправка сообщения", "Kafka Co
 Component(control_device_repository, "Репозиторий", "Доступ к данным")
 }
 
-ContainerDb(device_DB, "БД", "PostgreSQL")
+ContainerDb(device_DB, "БД", "PostgreSQL", "Хранение данных устройствах")
 
-ContainerQueue(Kafka, "Шина данных", "Kafka")
+ContainerQueue(Kafka, "Шина данных", "Kafka", "Асинхронный обмен сообщениями")
 
-Rel(user, api_gateway, "Пользуется", "REST")
+Rel(user, api_gateway, "Пользуется", "HTTPS/REST")
 
-Rel(api_gateway, control_device_component, "Включить отопление", "REST")
+Rel(api_gateway, control_device_component, "Включить отопление", "HTTPS/REST")
 Rel(control_device_component, control_device_service, "")
 Rel(control_device_service, control_device_repository, "")
 Rel(control_device_service, control_device_kafka, "")
 Rel(control_device_repository, device_DB, "Чтение/Запись")
 
-Rel(control_device_kafka, Kafka, "Включить отопление")
+Rel(control_device_kafka, Kafka, "Включить отопление", "Kafka Topic")
 
 }
 @enduml

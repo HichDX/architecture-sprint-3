@@ -1,59 +1,57 @@
 @startuml
-'!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Container.puml
+!include https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Container.puml
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
 
 'LAYOUT_WITH_LEGEND
 
 
-Person(user, "Пользователь")
+Person(user, "Пользователь", "Мобильное приложение")
+System_Ext(sensor, "Датчик", "API датчика")
 
 Enterprise_Boundary(e1, "Умный дом"){
 
-Container(api_gateway, "Api Gateway")
-Container(control_device, "Управление устройствами", "Включение/отключение отопления, регулирование температуры")
-Container(view_temp, "Мониторинг температуры", "Информация о температуре с датчиков")
-Container(users, "Управление пользователями", "Добавление/редактирование/удаление пользователей")
-Container(control_gate, "Управление воротами", "Автоматическое открытие/закрытие ворот")
-Container(control_view, "Управление наблюдением", "Удаленное наблюдение за домом")
-Container(notification, "Управление уведомлениями", "Отправка уведомлений пользователю")
-
-ContainerDb(device_DB, "БД", "PostgreSQL")
-ContainerDb(temp_DB, "БД", "PostgreSQL")
-ContainerDb(users_DB, "БД", "PostgreSQL")
-ContainerDb(gate_DB, "БД", "PostgreSQL")
-ContainerDb(view_DB, "БД", "PostgreSQL")
-ContainerDb(notification_DB, "БД", "PostgreSQL")
-
-ContainerQueue(Kafka, "Шина данных", "Kafka")
-
-Rel(user, api_gateway, "Пользуется", "REST")
+Container(api_gateway, "Api Gateway", "Kusk", "Машрутизация, управление доступом, единая точка входа")
+Container(control_device, "Управление устройствами", "Java, Spring", "Включение/отключение отопления, регулирование температуры, автоматическое открытие/закрытие ворот, удаленное наблюдение за домом")
+Container(view_temp, "Управление телеметрии", "Java, Spring", "Сбор ифнормации телеметрии")
+Container(users, "Управление пользователями", "Java, Spring", "Добавление/редактирование/удаление пользователей и аутентификация")
+Container(settings_device, "Сервис автоматизации", "Java, Spring", "Настройка сценарий устройства")
+Container(notification, "Управление уведомлениями", "Java, Spring", "Отправка уведомлений пользователю")
 
 
-Rel(api_gateway, control_device, "Включить отопление", "REST")
+ContainerDb(device_DB, "БД", "PostgreSQL", "Хранение данных устройствах")
+ContainerDb(temp_DB, "БД", "PostgreSQL", "Хранение данных телеметрии")
+ContainerDb(users_DB, "БД", "PostgreSQL", "Хранение данных пользователей")
+ContainerDb(settings_device_db, "БД", "PostgreSQL", "Хранение настроек устройств")
+ContainerDb(notification_DB, "БД", "PostgreSQL", "Хранение настроек уведомлений")
+
+ContainerQueue(Kafka, "Шина данных", "Kafka", "Асинхронный обмен сообщениями")
+
+Rel(user, api_gateway, "Пользуется", "HTTPS/REST")
+
+
+Rel(api_gateway, control_device, "Включить отопление", "HTTPS/REST")
 Rel(control_device, device_DB, "Чтение/Запись")
 
-Rel(api_gateway, view_temp,"Посмотреть температуру", "REST")
+Rel(api_gateway, view_temp,"Посмотреть температуру", "HTTPS/REST")
 Rel(view_temp, temp_DB, "Чтение/Запись")
 
-Rel(api_gateway, users, "Добавить/Редактировать/Удалить пользователя", "REST")
+Rel(api_gateway, users, "Добавить/Редактировать/Удалить пользователя, аутентификация", "HTTPS/REST")
 Rel(users, users_DB, "Чтение/Запись")
 
-Rel(api_gateway, control_gate, "Открыть ворота", "REST")
-Rel(control_gate, gate_DB, "Чтение/Запись")
+Rel(api_gateway, settings_device, "Включить отопление в 17:00", "HTTPS/REST")
+Rel(settings_device, settings_device_db, "Чтение/Запись")
 
-Rel(api_gateway, control_view,"Выбрать камеру", "REST")
-Rel(control_view, view_DB, "Чтение/Запись")
-
-Rel(control_device, Kafka, "Включить отопление")
-Rel(view_temp, Kafka, "Посмотреть температуру")
-Rel(users, Kafka, "Добавить пользователя")
-Rel(control_gate, Kafka, "Открыть ворота")
-Rel(control_view, Kafka, "Выбрать камеру")
+Rel(control_device, Kafka, "Включить отопление", "Kafka Topic")
+Rel(view_temp, Kafka, "Посмотреть температуру", "Kafka Topic")
+Rel(users, Kafka, "Добавить пользователя", "Kafka Topic")
+Rel(settings_device, Kafka, "Включить отопление в 17:00", "Kafka Topic")
 Rel(Kafka, notification, "Уведомить пользователя")
-Rel_U(notification, user, "Уведомить пользователя")
+Rel_U(notification, user, "Уведомить пользователя", "Push")
 
-Rel(notification, notification_DB,"Чтение/Запись", "REST")
+Rel(notification, notification_DB, "Чтение/Запись")
+
+Rel_U(sensor, Kafka, "Передача телеметрии", "Kafka Topic")
 
 }
 @enduml

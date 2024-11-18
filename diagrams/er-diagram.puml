@@ -3,42 +3,62 @@
 
 
 class User{
-    + Int id
-    + String login
-    + Hash password
-    + DateTime date_add
-    + DateTime time_modif
+    * Id int PK
+    * login string  
+    * password Hash 
+    + date_add DateTime 
+    + time_modif DateTime 
 }
 
 class Role{
-   + Int id
-   + String name_role
+   * id int PK 
+   * name_role string 
+     + date_add DateTime 
+     + time_modif DateTime 
+}
+
+class RoleUser{
+   * id int PK 
+   * user_id int FK
+   * role_id int FK
 }
 
 
 class House{
-    + Int id
-    + String address
-    + DateTime date_add
-    + DateTime time_modif
+    * id int PK
+    * address string  
+    + user_id int FK 
+    + date_add DateTime  
+    + time_modif DateTime  
 }
 
 
 class Device{
-    + Int id
-    + String device_name
-    + DateTime date_add
-    + DateTime time_modif
+    * id Int PK
+    * device_name String
+    + device_type_id int FK
+    + house_id int FK 
+    + status Bool 
+    + date_add DateTime 
+    + time_modif DateTime 
+}
+
+class telemetry{
+    * id Int PK
+    + device_id INT FK
+    + value float
+    + time_modif DateTime 
 }
 
 class DeviceType{
-    + int id
-    + string type_name
+    * id int PK
+    + type_name string 
 }
 
-User ||--o{ House : "has"
-User ||--o{ Role: "has"
-House||--o{ Device: "has"
-Device||--o{ DeviceType: "has"
-
+User ||--o{ House : "Имеет"
+Role ||--o{ RoleUser: "Имеет"
+User ||--o{ RoleUser: "Имеет"
+House||--o{ Device: "Имеет"
+DeviceType ||--o{ Device: "Имеет"
+Device||--o{ telemetry: "Имеет"
 @enduml
