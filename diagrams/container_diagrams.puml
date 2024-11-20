@@ -7,6 +7,8 @@
 
 
 Person(user, "Пользователь", "Мобильное приложение")
+Container(mob_app, "Мобильное приложение")
+
 System_Ext(sensor, "Датчик", "API датчика")
 
 Enterprise_Boundary(e1, "Умный дом"){
@@ -27,7 +29,9 @@ ContainerDb(notification_DB, "БД", "PostgreSQL", "Хранение настр�
 
 ContainerQueue(Kafka, "Шина данных", "Kafka", "Асинхронный обмен сообщениями")
 
-Rel(user, api_gateway, "Пользуется", "HTTPS/REST")
+
+Rel(user, mob_app, "Пользуется", "HTTPS/REST")
+Rel(mob_app, api_gateway, "Отправляет команды", "HTTPS/REST")
 
 
 Rel(api_gateway, control_device, "Включить отопление", "HTTPS/REST")
@@ -47,11 +51,11 @@ Rel(view_temp, Kafka, "Посмотреть температуру", "Kafka Topi
 Rel(users, Kafka, "Добавить пользователя", "Kafka Topic")
 Rel(settings_device, Kafka, "Включить отопление в 17:00", "Kafka Topic")
 Rel(Kafka, notification, "Уведомить пользователя")
-Rel_U(notification, user, "Уведомить пользователя", "Push")
+Rel_U(notification, mob_app, "Уведомить пользователя", "Push")
 
 Rel(notification, notification_DB, "Чтение/Запись")
 
-Rel_U(sensor, Kafka, "Передача телеметрии", "Kafka Topic")
+Rel_R(sensor, api_gateway, "Передача телеметрии", "HTTPS/REST")
 
 }
 @enduml

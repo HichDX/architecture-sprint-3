@@ -6,12 +6,16 @@
 
 
 Person(user, "Пользователь")
+Container(mob_app, "Мобильное приложение")
+
 System_Boundary(e1, "Умный дом"){
   Container(smart_home, "Приложение умный дом", "java, postgresql", "Управление отоплением, Мониторинг температуры")
 }
 System_Ext(sensor, "Датчик", "API датчика")
 
 
-Rel(user, smart_home, "Пользуется системой умный дом", "rest, sync")
+Rel(user, mob_app, "Пользуется системой умный дом", "rest, sync")
+Rel(mob_app, smart_home, "Пользуется системой умный дом", "rest, sync")
 Rel(smart_home, sensor, "Включение/отключение отопления, получение данных о температуре", "rest, sync")
 @enduml
+
