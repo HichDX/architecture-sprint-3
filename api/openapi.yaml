@@ -1,0 +1,123 @@
+openapi: '3.0.0'
+info:
+  title: SmartHome API
+  version: '1.0.0'
+  
+paths:
+  /device/{id}:
+    get:
+      summary: Получение устройства
+      parameters: 
+      - name: id
+        in: path
+        required: true
+        schema:
+            type: integer
+      responses:
+        '200':
+          description: Устройство получено
+          content:
+            application/json:
+              schema:
+                 $ref: "#/components/schemas/device"
+        '404':
+          description: Устройство не найдено
+        '500':
+          description: Ошибка сервера
+  /device-new:
+    post:
+      summary: Добавление устройства
+      requestBody:
+        required: true
+        description: "Тело запроса создания устройства"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/newDevice"
+      responses:
+        '200':
+          description: Устройство добавлено
+        '400':
+          description: Некорректный запрос
+        '500':
+          description: Ошибка сервера
+  /device/{id}/status:
+    put:
+      summary: Обновление статуса устройства
+      parameters: 
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: boolean
+      responses:
+        '200':
+          description: Статус обновлен
+        '400':
+          description: Некорректный запрос
+        '500':
+          description: Ошибка сервера
+  /device-type:
+    get:
+      summary: Получение списка типа устройств
+      responses:
+        '200':
+          description: Список типа устройств получено
+          content:
+            application/json:
+              schema:
+                 $ref: "#/components/schemas/deviceType"
+        '404':
+          description: Список типа устройств не найден
+        '500':
+          description: Ошибка сервера
+
+components:
+  schemas:
+    device:
+      description: структура запроса для устройства
+      properties:
+        id:
+          type: number
+        device_name:
+          type: string
+        device_type_id:
+          type: number
+        house_id:
+          type: number
+        status:
+          type: boolean
+        date_add:
+          type: string
+          format: date-time
+        time_modif:
+          type: string
+          format: date-time
+    newDevice:
+      description: структура запроса для добавления устройства
+      properties:
+        device_name:
+          type: string
+        house_id:
+          type: number
+        device_type_id:
+          type: number
+        status:
+          type: boolean
+    deviceType:
+      description: структура запроса для типа устройства
+      properties:
+        id:
+          type: number
+        type_name:
+          type: string
+  
