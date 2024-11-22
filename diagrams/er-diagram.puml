@@ -1,0 +1,81 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+
+class User{
+    * Id int PK NOT NULL
+    * login string NOT NULL
+    * password Hash NOT NULL
+    + date_add DateTime NULL
+    + time_modif DateTime NULL
+}
+
+class Role{
+   * id int PK NOT NULL
+   * name_role string NOT NULL
+     + date_add DateTime NULL
+     + time_modif DateTime NULL
+}
+
+class RoleUser{
+   * id int PK NOT NULL
+   * user_id int FK NOT NULL
+   * role_id int FK NOT NULL
+}
+
+
+class House{
+    * id int PK NOT NULL
+    * address string NOT NULL
+    + date_add DateTime NULL 
+    + time_modif DateTime NULL
+}
+
+class UserHouse{
+    * id int PK NOT NULL
+    * user_id int FK NOT NULL
+    * house_id int FK NOT NULL
+}
+
+
+class Device{
+    * id Int PK NOT NULL
+    * device_name String NOT NULL
+    * device_type_id int FK NOT NULL
+    * house_id int FK NOT NULL
+    * status Bool NOT NULL
+    + date_add DateTime NULL
+    + time_modif DateTime NULL
+}
+
+class Telemetry{
+    * id Int PK NOT NULL
+    * device_id INT FK NOT NULL
+    * device_action_id FK NOT NULL
+    + value float NULL
+    + time_modif DateTime NULL
+}
+
+class DeviceType{
+    * id int PK NOT NULL
+    * type_name string NOT NULL
+}
+
+class DeviceAction {
+     * id int PK NOT NULL
+     * device_id int FK NOT NULL
+     + time_start DATETIME NULL
+     + time_end DATETIME NULL
+}
+
+User ||--o{ UserHouse : "Имеет"
+House  ||--o{ UserHouse : "Имеет"
+Role ||--o{ RoleUser: "Имеет"
+User ||--o{ RoleUser: "Имеет"
+House||--o{ Device: "Имеет"
+DeviceType ||--o{ Device: "Имеет"
+Device||--o{ Telemetry: "Имеет"
+Device||--o{ DeviceAction : "Имеет"
+DeviceAction ||--o{ Telemetry: "Имеет"
+
+@enduml

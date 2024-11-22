@@ -1,0 +1,37 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title Добавление пользователя
+
+class AddUser {
+    +AddUser()
+}
+
+class User {
+    + int id
+    + string name
+    + string email
+    + date birthday
+    + List<Role>
+}
+
+
+class Role {
+    + int id
+    + string nameRole
+    + string description
+    + List<Permission>
+    + void AddRole()
+}
+
+class Permission {
+    + int id
+    + string name
+    + string description
+    + void AddPermission ()
+}
+
+AddUser "1" -- "0" User : "использует"
+User "1" -- "0" Role : "имеет"
+Role "1" -- "0" Permission : "содержит"
+@enduml

@@ -1,85 +1,75 @@
-# Базовая настройка
+## Задание 1
+1) Управление отоплением
+    - Включение/отключение отопления
+    - Регулирование температуры
+   Проверка температуры
+    - Получение информации о температуре
 
-## Запуск minikube
+    Все управление происходит от сервера к датчику.
 
-[Инструкция по установке](https://minikube.sigs.k8s.io/docs/start/)
+2) 
+  - Домен: управление отоплением
+    - Поддомен: управление температурой
+      - Контекст: установка температуры
+      - Контекст: включение/выключение отопления
+  - Домен: Мониторинг температуры
+    - Поддомен: просмотр температуры
+      - Контекст: получение информации о температуре
 
-```bash
-minikube start
-```
+3) Проблемы приложения:
+  - Тяжело масштабировать систему, т.к. архитектура этого ПО является монолитным
+  - Для деплоя необходимо останавливать все приложение
+  - Все взаимодействия происходят синхронно, может привести к снижение производительности и задержкам при обработке запросов
 
-## Добавление токена авторизации GitHub
+- Язык программирования: Java
+- База данных: PostgreSQL
 
-[Получение токена](https://github.com/settings/tokens/new)
+Диаграмма: 
 
-```bash
-kubectl create secret docker-registry ghcr --docker-server=https://ghcr.io --docker-username=<github_username> --docker-password=<github_token> -n default
-```
+![alt text](diagrams/context.png)
 
-## Установка API GW kusk
+## Задание 2
 
-[Install Kusk CLI](https://docs.kusk.io/getting-started/install-kusk-cli)
+1) Микросервисы:
+    - Управление устройствами - микросервис завязан на включение/отключение отопления, регулирование температуры, выбора камер в доме, автоматического открытия/закрытия ворот
+    - Управление телеметрией - микросервис для сбора информации с телеметрии
+    - Управление пользователями - микросервис для добавлния/редактирования/удаления пользователей и аутентификации
+    - Сервис автоматизации - для настройки сценария устройств
+    - Управление уведомлениями - микросервис для отпавки уведомлению пользователю о том, что действие совершено успешно или безуспешно
 
-```bash
-kusk cluster install
-```
+2) Взаимодействие:
+  - Взаимодействия пользователя происходит через API Gateway
+  - Шина данных Kafka, взамодействие с датчиком
+  - У каждого микросервиса своя БД
 
-## Смена адреса образа в helm chart
+3)
+  - Диаграмма контейнеров
+    
+  ![alt text](diagrams/container.png)
 
-После того как вы сделали форк репозитория и у вас в репозитории отработал GitHub Action. Вам нужно получить адрес образа <https://github.com/><github_username>/architecture-sprint-3/pkgs/container/architecture-sprint-3
+  - Диаграмма компонентов
+    
+  ![alt text](diagrams/component.png)
 
-Он выглядит таким образом
-```ghcr.io/<github_username>/architecture-sprint-3:latest```
+  - Диаграмма кода
+    
+  ![alt text](diagrams/code.png)
 
-Замените адрес образа в файле `helm/smart-home-monolith/values.yaml` на полученный файл:
 
-```yaml
-image:
-  repository: ghcr.io/<github_username>/architecture-sprint-3
-  tag: latest
-```
 
-## Настройка terraform
+## Задание 3
+ER-Диаграмма
 
-[Установите Terraform](https://yandex.cloud/ru/docs/tutorials/infrastructure-management/terraform-quickstart#install-terraform)
+- Пользователь — Дом: один пользователь может иметь доступ к нескольким домам, но каждый дом связан только с одним пользователем.
+- Пользователь - Роль: один пользователь может иметь несколько ролей
+- Дом — Устройство: один дом может содержать несколько устройств, и каждое устройство принадлежит только одному дому. 
+- Тип устройства - Устройство: одно устройство может иметь один тип
+- Устройство — Телеметрия: одно устройство может генерировать множество записей телеметрии.
 
-Создайте файл ~/.terraformrc
+![alt text](diagrams/er-diagram.png)
 
-```hcl
-provider_installation {
-  network_mirror {
-    url = "https://terraform-mirror.yandexcloud.net/"
-    include = ["registry.terraform.io/*/*"]
-  }
-  direct {
-    exclude = ["registry.terraform.io/*/*"]
-  }
-}
-```
 
-## Применяем terraform конфигурацию
 
-```bash
-cd terraform
-terraform init
-terraform apply
-```
+## Часть 2. Задание 1
 
-## Настройка API GW
-
-```bash
-kusk deploy -i api.yaml
-```
-
-## Проверяем работоспособность
-
-```bash
-kubectl port-forward svc/kusk-gateway-envoy-fleet -n kusk-system 8080:80
-curl localhost:8080/hello
-```
-
-## Delete minikube
-
-```bash
-minikube delete
-```
+[Документация OpenAPI](api/openapi.yaml)
