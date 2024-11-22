@@ -72,4 +72,4 @@ ER-Диаграмма
 
 ## Часть 2. Задание 1
 
-[Link text](api\openapi.yaml 'OpenAPI')
+[Документация OpenAPI](api/openapi.yaml)
